@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Зов</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script>
+/* =====================================================================
+   НАСТРОЙКИ И СЦЕНАРИЙ — ЗДЕСЬ МОЖНО МЕНЯТЬ ТЕКСТ
+   ---------------------------------------------------------------------
+   • Каждая строчка в SCRIPT — один шаг истории, они идут по порядку.
+   • chat:  сообщение в чате (from: 'her1' / 'her2' — когда пишут двое)
+   • toast: уведомление от тебя поверх сцены
+   • say:   реплика персонажа (who — имя, pose — картинка)
+   • narr:  текст повествования        • sys: служебная строка в чате
+   • task:  задание (тексты и подсказки — в TASKS ниже)
+   • item:  выдать предмет (описания — в ITEMS ниже)
+   Меняй только текст внутри кавычек '...'. Если внутри текста нужен
+   апостроф, ставь перед ним обратный слэш: \'
+   Ответы закодированы и здесь не видны (шпаргалка — в скрытом меню).
+   ===================================================================== */
+const CONFIG = {
+  HER_NAME: 'Жена 💕',
+};
+
+/* Картинки, которых пока нет, временно подменяются похожими */
+const ALIAS = {};
+
+const SCRIPT = [
+  // ───────────── I. УТРО ─────────────
+  {chapter: 1, title: 'Утро'},
+  {mode: 'chat', bg: 'bg_bedroom_morning'},
+  {chat: 'Ты проснулся?'},
+  {chatChoice: ['Да. Ты где?', 'Почти. Что-то случилось?']},
+  {chat: 'Мне пришлось уйти раньше. Со мной всё хорошо, не волнуйся.'},
+  {chat: 'Мне снова снился тот город. Под водой, огромный и пустой.'},
+  {chat: 'В этот раз я была там не одна.'},
+  {del: true},
+  {chat: 'У кровати записка. Прочитай её, прежде чем идти дальше.'},
+  {task: 'note'},
+  {item: 'note'},
+  {chat: 'Значит, ты тоже его видел. Я надеялась, что нет.'},
+  {bg: 'bg_kitchen'},
+  {chat: 'Следующее лежит там, где всегда холодно, а когда открываешь дверь, загорается свет.'},
+  {chat: 'Я записала то, что слышала во сне. Как смогла.'},
+  {task: 'fridge'},
+  {item: 'can'},
+  {chat: 'Р\'льех. Так называют этот город. Я нашла это слово неделю назад, в книгах.'},
+  {chat: 'Банку можешь выпить. Утро будет долгим.'},
+  {chat: 'Всё, что я успела собрать, лежит в папке.'},
+  {action: 'Открыть папку'},
+
+  // ───────────── II. АРХИВ ─────────────
+  {chapter: 2, title: 'Архив'},
+  {mode: 'vn', bg: 'bg_folder'},
+  {narr: 'В папке листы из её блокнота, газетная вырезка и потрёпанная тетрадь в клеёнчатой обложке.'},
+  {narr: 'Листы из блокнота перепутаны, будто их вырвали и сунули обратно как попало.'},
+  {task: 'notes'},
+  {toast: 'Художник. Я поняла это позавчера и не знала, как тебе сказать.'},
+  {toast: 'В 1925-м всё началось со скульптора. Он вылепил то, что видел во сне.'},
+  {toast: 'Вырезку кто-то бросил в почтовый ящик. Мне кажется, в ней что-то спрятано.'},
+  {task: 'clipping'},
+  {item: 'clipping'},
+  {toast: 'Произнеси… что?'},
+  {narr: 'Тетрадь оказывается судовым журналом. Шхуна «Эмма», март 1925 года. Почерк торопливый, чернила местами размыты.'},
+  {task: 'log'},
+  {item: 'log'},
+  {toast: 'Тогда, в океане, моряки видели этот город. Он поднялся на один день и снова ушёл под воду.'},
+  {toast: 'Если он поднимется снова, то не в океане. Во сне. Через того, кто сможет дать ему форму.'},
+  {narr: 'На самом дне папки лежит ещё один лист. Почерк чужой, чернила ещё не высохли.'},
+  {task: 'page'},
+  {item: 'page'},
+  {toast: 'Подожди. Когда я уходила, этого листа в папке не было.'},
+  {toast: 'Не произноси это вслух. Пожалуйста.'},
+  {say: '', pose: 'hero_shocked', text: 'Но слова уже звучат у тебя в голове, твоим голосом. Комната медленно темнеет.'},
+  {fade: true},
+
+  // ───────────── III. Р'ЛЬЕХ ─────────────
+  {chapter: 3, title: 'Р\'льех'},
+  {mode: 'vn', bg: 'bg_rlyeh_shore'},
+  {pose: ''},
+  {narr: 'Мокрый камень под ногами. Вместо неба тяжёлая зеленоватая мгла.'},
+  {narr: 'Город поднимается ступенями, слишком огромными для человеческих ног.'},
+  {narr: 'Из тумана выходят две кошки. Ты их знаешь.'},
+  {say: 'Удон', pose: 'cat_udon', text: 'Ты пришёл не тем путём. Но раз уж пришёл, держись рядом.'},
+  {say: 'Сима', pose: 'cat_sima', text: 'Здесь нельзя задерживаться. Он спит, но слышит.'},
+  {say: 'Удон', pose: 'cat_udon', text: 'И да. Здесь мы не ссоримся. Не до того.'},
+  {bg: 'bg_rlyeh_gate'},
+  {say: '', pose: 'npc_nightgaunt', text: 'У врат сидит существо без лица, с перепончатыми крыльями. Оно не двигается.'},
+  {say: 'Сима', pose: 'cat_sima', text: 'Стражу не нужны слова. Врата откроются только тому, кто повторит их узор.'},
+  {task: 'gate'},
+  {say: '', pose: 'npc_nightgaunt', text: 'Страж медленно отводит крыло и что-то роняет к твоим ногам. Проход открыт.'},
+  {item: 'seal'},
+  {bg: 'bg_rlyeh_temple'},
+  {pose: ''},
+  {narr: 'В стене храма висит глиняный барельеф, разбитый на квадраты. Кто-то уже пытался его собрать.'},
+  {say: 'Удон', pose: 'cat_udon', text: 'Его начал художник, который видел этот сон почти сто лет назад.'},
+  {say: 'Сима', pose: 'cat_sima', text: 'И не закончил. Не трогай его. Мы найдём другой выход.'},
+  {ghost: 'she_mysterious'},
+  {toast: 'Я тебя вижу. Я рядом.'},
+  {toast: 'Собери его. Это дорога домой. Поверь мне.'},
+  {choice: [
+    {label: 'Собрать барельеф', reply: 'Я знала, что ты меня услышишь.'},
+    {label: 'Послушать кошек', reply: 'Пожалуйста. Мне страшно. Я не выберусь отсюда без тебя.'},
+  ]},
+  {pose: ''},
+  {task: 'relief'},
+  {item: 'relief'},
+  {quake: true, bg: 'bg_rlyeh_rising'},
+  {narr: 'Камень под ногами вздрагивает. Из глубины поднимается гул, низкий, как дыхание.'},
+  {narr: 'Над храмом, в зелёной мгле, медленно открывается что-то огромное. Похожее на глаз.'},
+  {say: 'Удон', pose: 'cat_udon', text: 'Что ты сделал?'},
+  {say: 'Сима', pose: 'cat_sima', text: 'Он дал ему форму. Своими руками.'},
+  {toast: 'Это писала не я.'},
+  {toast: 'Проснись. Сейчас же.'},
+  {fade: true},
+
+  // ───────────── IV. ПОДМЕНА ─────────────
+  {chapter: 4, title: 'Подмена'},
+  {mode: 'chat', bg: 'bg_bedroom_morning', tint: true, head: 'Жена 💕 · 2 чата'},
+  {sys: 'Ты просыпаешься. В комнате пахнет морем.'},
+  {chat: 'Ты проснулся слишком рано. Возвращайся, ты почти закончил.', from: 'her1'},
+  {chat: 'Не слушай. Это не я.', from: 'her2'},
+  {chat: 'Это я. Ложись обратно. Тебе нужно поспать.', from: 'her1'},
+  {chat: 'Шкаф с настолками. Я оставила там конверт.', from: 'her2'},
+  {chat: 'Не трогай бумагу. Бумага лжёт.', from: 'her1'},
+  {chat: 'Только бумаге сейчас и можно верить. Иди.', from: 'her2'},
+  {task: 'cupboard'},
+  {item: 'envelope'},
+  {sys: 'Спроси о том, кого с вами больше нет.'},
+  {chatChoice: ['Как звали нашего кота, которого больше нет?']},
+  {chat: 'О чём ты? У нас Удон и Сима. Других не было.', from: 'her1'},
+  {chat: 'Оскар. Наш плоскомордик.', from: 'her2'},
+  {task: 'real'},
+  {chat: 'Это я. Он пишет моими словами, но не знает нас. Он видит только то, что есть сейчас.', from: 'her2'},
+  {sys: 'Чат ① удалён.'},
+  {head: CONFIG.HER_NAME},
+  {chat: 'Барельеф собран, и этого уже не отменить. Но его можно отпустить обратно. Он примет откуп.'},
+  {chat: 'Подношение я приготовила заранее. Оно там, где вода ходит по кругу.'},
+  {task: 'offering'},
+  {item: 'offering'},
+  {chat: 'Теперь тебе придётся уснуть ещё раз. Ненадолго. Отдай ему это и сразу назад.'},
+  {chat: 'Ты справишься, волосати попи.'},
+  {action: 'Закрыть глаза'},
+  {fade: true},
+
+  // ───────────── V. ГЛУБИНЫ ─────────────
+  {chapter: 5, title: 'Глубины'},
+  {mode: 'vn', bg: 'bg_rlyeh_rising', tint: false},
+  {pose: ''},
+  {narr: 'Храм уже наполовину в воде. Барельеф светится, как открытая дверь.'},
+  {say: 'Сима', pose: 'cat_sima', text: 'Ты вернулся. Хорошо. Он ещё не проснулся до конца.'},
+  {say: '', pose: 'npc_deepone', text: 'Из чёрной воды поднимается фигура. Рыбьи глаза, серая кожа, жабры на шее.'},
+  {say: 'Глубоководный', pose: 'npc_deepone', text: 'В прошлый раз ты пришёл с пустыми руками.'},
+  {choice: [
+    {label: 'Сегодня — нет.'},
+    {label: 'Я принёс откуп.'},
+  ]},
+  {say: '', pose: 'npc_deepone', text: 'Ты протягиваешь подношение. Глубоководный долго смотрит на него рыбьими глазами, а потом забирает.'},
+  {removeItem: 'offering'},
+  {say: 'Глубоководный', pose: 'npc_deepone', text: 'Дар принят. Но дверь закроется, только если ты скажешь слова, которые знает каждый из нас.'},
+  {task: 'couplet'},
+  {pose: ''},
+  {narr: 'Ты договариваешь, и вода начинает подниматься.'},
+  {narr: 'Город уходит вниз медленно, ступень за ступенью, как будто ложится спать.'},
+  {say: 'Удон', pose: 'cat_udon', text: 'Он спит. Опять. На сто лет, если повезёт.'},
+  {say: 'Сима', pose: 'cat_sima', text: 'Иди. Тебя ждут.'},
+  {fade: true},
+
+  // ───────────── VI. РАССВЕТ ─────────────
+  {chapter: 6, title: 'Рассвет'},
+  {mode: 'chat', bg: 'bg_bedroom_dawn', head: CONFIG.HER_NAME},
+  {sys: 'Ты просыпаешься. Комната залита солнцем, и в ней больше не пахнет морем.'},
+  {chat: 'Ты дома. Я чувствую: он ушёл.'},
+  {chat: 'Остался один подарок. Я спрятала его там, где сон тебя не достанет.'},
+  {chat: 'Всё, что ты сегодня нашёл, помечено знаками. Порядок знаков выбит на Печати врат. Сложи буквы.'},
+  {task: 'final'},
+  {chat: 'Да. Загляни в багажник. Ключи там же, где всегда.'},
+  {chat: 'На упаковке тот же знак, что был утром на записке.'},
+  {sys: 'Иди.'},
+  {action: 'Я у машины'},
+
+  // ───────────── ФИНАЛ ─────────────
+  {mode: 'vn', bg: 'cg_final'},
+  {pose: ''},
+  {say: CONFIG.HER_NAME, text: 'Он будет спать дальше. Ещё очень долго.'},
+  {say: CONFIG.HER_NAME, text: 'А ты проснулся, и сегодня тебе двадцать три.'},
+  {say: CONFIG.HER_NAME, text: 'С днём рождения, Тоша. Я люблю тебя.'},
+  {say: CONFIG.HER_NAME, text: 'Позвони мне, когда откроешь.'},
+  {final: true},
+];
+
+/* Задания. hints — две подсказки; третья кнопка показывает ответ (он закодирован в a). */
+const TASKS = {
+  note:     {title: 'Записка', prompt: 'У кровати лежит записка. Найди её и введи код, который в ней есть.',
+             hints: ['Прочитай записку целиком.', 'В записке есть год.'], a: 'MTkyNQ==', h: ['b6dcbe1d']},
+  fridge:   {title: 'Холод', prompt: 'Найди место из её сообщения. Там она записала слово числами. Расшифруй и введи его.',
+             hints: ['Каждое число — это буква.', 'А = 1, Б = 2… Буква Ё тоже считается.'], a: '0KDQm9Cs0JXQpQ==', h: ['46856742', '8df0257e']},
+  notes:    {title: 'Её записи', prompt: 'Записи перепутаны. Разложи их по порядку — и пойми, кого ищет сон.', doc: 'notes',
+             hints: ['Сначала разложи записи по датам, от ранней к поздней.', 'Теперь читай только первые буквы.'], a: '0KXQo9CU0J7QltCd0JjQmg==', h: ['608732f1']},
+  clipping: {title: 'Вырезка', prompt: 'Что спрятано в заметке?', doc: 'clipping',
+             hints: ['Главное — в начале.', 'Прочитай первые буквы строк сверху вниз.'], a: '0J/QoNCe0JjQl9Cd0JXQodCY', h: ['e29e49c3']},
+  log:      {title: 'Судовой журнал', prompt: 'Где поднялся город? Введи координаты цифрами: градусы и минуты широты, потом градусы и минуты долготы.', doc: 'log',
+             hints: ['Город видели 23 марта. В тот день координаты не записаны, но сказано, где стояла шхуна.', 'Посередине: сложи две широты и раздели пополам. С долготой так же.'], a: 'NDfCsDnigLIg0Y4uINGILiwgMTI2wrA0M+KAsiDQty4g0LQuIOKAlCDQstCy0LXQtNC4IDQ3IDkgMTI2IDQz', h: ['5de4984e', '6e20748c']},
+  page:     {title: 'Чужой лист', prompt: 'Допиши перевод.', doc: 'page',
+             hints: ['Что делает тот, кто спит?', 'Английское слово на -ing.'], a: 'ZHJlYW1pbmc=', h: ['354bd4cf', 'ef8db646']},
+  gate:     {title: 'Врата', prompt: 'Знаки на вратах загораются по очереди. Повтори узор. Кругов три, и каждый длиннее предыдущего.', game: 'simon',
+             hints: ['Узор каждого круга можно показать ещё раз.', 'Проговаривай вслух названия знаков.'], a: '0JrRgNGD0LMgMTog0J7QutC+IOKGkiDQl9C90LDQuiDihpIg0JHQsNGI0L3RjyDihpIg0KnRg9C/0LDQu9GM0YbQtS4g0JrRgNGD0LMgMjog0JrRgNGL0LvRjNGPIOKGkiDQntC60L4g4oaSINCa0YLRg9C70YXRgyDihpIg0JfQvdCw0Log4oaSINCR0LDRiNC90Y8g4oaSINCp0YPQv9Cw0LvRjNGG0LUuINCa0YDRg9CzIDM6INCa0YLRg9C70YXRgyDihpIg0KnRg9C/0LDQu9GM0YbQtSDihpIg0JrRgNGL0LvRjNGPIOKGkiDQntC60L4g4oaSINCX0L3QsNC6IOKGkiDQkdCw0YjQvdGPIOKGkiDQmtGC0YPQu9GF0YMg4oaSINCa0YDRi9C70YzRjw=='},
+  relief:   {title: 'Барельеф', prompt: 'Поворачивай квадраты, пока не соберётся символ.', game: 'relief',
+             hints: ['Нажми на квадрат, чтобы повернуть его.', 'Нужен тот же символ, что на записке у кровати.'], a: '', solveHint: 'Собрать барельеф'},
+  cupboard: {title: 'Конверт', prompt: 'Найди конверт в шкафу с настолками. Как подписана записка внутри?',
+             hints: ['Конверт может лежать между коробками или в одной из них.', 'Посмотри на самую последнюю строчку.'], a: '0LLQvtC70L7RgdCw0YLQuCDQv9C+0L/QuA==', h: ['e621c8f6']},
+  real:     {title: 'Кто настоящая?', prompt: 'Тебе пишут двое. Кто из них она?', pick: ['Первая ①', 'Вторая ②'],
+             hints: ['Сон видит только то, что есть сейчас. Прошлого он не знает.', 'Вспомни, о ком спрашивала записка.'], a: '0JLRgtC+0YDQsNGPIOKRoQ==', h: ['5ce05264'],
+             wrong: 'Где-то очень далеко что-то тихо рассмеялось. Ты выбрал не её.'},
+  offering: {title: 'Подношение', prompt: 'Найди подношение. Какое слово закроет за тобой дверь?',
+             hints: ['Открой чужой лист в инвентаре.', 'Последнее слово фразы культа.'], a: 'Zmh0YWdu', h: ['948f91fc', 'c7b6202a']},
+  couplet:  {title: 'Слова', prompt: 'Глубоководный ждёт. Договори строки, которые знает каждый из них.', doc: 'couplet',
+             hints: ['Это строки Лавкрафта о тех, кто спит вечно.', 'Что может умереть с течением странных эпох?'], a: 'ZGVhdGg=', h: ['196a3b78', '4b86bb8c']},
+  final:    {title: 'Знаки', prompt: 'Куда ведут знаки на предметах?', inv: true,
+             hints: ['Открой Печать врат в инвентаре: там порядок знаков.', 'У каждого предмета есть знак и буква. Расставь буквы в порядке знаков на печати.'], a: '0JzQkNCo0JjQndCQ', h: ['353f317c', '423e9a5c']},
+};
+
+/* Предметы. sign — номер знака (0 Око, 1 Щупальце, 2 Знак, 3 Крылья, 4 Башня, 5 Ктулху), letter — буква */
+const ITEMS = {
+  note:     {name: 'Записка', img: 'item_note', sign: 3, letter: 'И', desc: 'Её почерк. Март 1925 года.'},
+  can:      {name: 'Банка', img: 'item_can', sign: 2, letter: 'А', desc: 'Энергетик из холодильника. Утро будет долгим.'},
+  clipping: {name: 'Вырезка', img: 'item_clipping', sign: 5, letter: 'М', desc: 'Заметка без даты. В ней спрятан приказ.'},
+  log:      {name: 'Судовой журнал', img: 'item_log', sign: 1, letter: 'Н', desc: 'Шхуна «Эмма». 47°9′ ю. ш., 126°43′ з. д.'},
+  page:     {name: 'Чужой лист', img: 'item_page', sign: 4, letter: 'Ш', desc: 'Ph\'nglui mglw\'nafh Cthulhu R\'lyeh wgah\'nagl fhtagn.'},
+  seal:     {name: 'Печать врат', img: 'item_seal', seq: [5, 0, 4, 3, 1, 2], desc: 'Тяжёлый камень. По краю выбиты знаки в таком порядке:'},
+  relief:   {name: 'Барельеф', img: 'RELIEF', sign: 0, letter: 'А', desc: 'Ты закончил то, что не закончил художник сто лет назад.'},
+  envelope: {name: 'Её конверт', img: 'item_envelope', desc: 'Сон видит только то, что есть сейчас. Спроси меня о том, кого с нами больше нет. — Твоя волосати попи'},
+  offering: {name: 'Подношение', img: 'item_offering', desc: 'Откуп для того, кто спит.'},
+};
+
+/* Тексты документов */
+const DOCS = {
+  notes: [ // [дата, текст] — в игре показываются вперемешку
+    ['17 ноября', 'Жёлтые глаза в воде. Кто-то зовёт по имени. Не по моему.'],
+    ['9 ноября', 'Холодно. Проснулась в четыре, простыня мокрая, будто я лежала в воде.'],
+    ['21 ноября', 'Из всех анкет я тогда выбрала твою. Теперь, кажется, понимаю почему.'],
+    ['13 ноября', 'Две ночи подряд один и тот же город. Зелёный камень, ступени для великанов.'],
+    ['24 ноября', 'Кому-то там нужны твои руки. Мне страшно за тебя.'],
+    ['11 ноября', 'Утром на подушке был песок. Откуда?'],
+    ['19 ноября', 'Нашла в книгах: в 1925-м такие сны видели художники и скульпторы.'],
+    ['15 ноября', 'Он не спит. Он ждёт. Не знаю, откуда я это знаю.'],
+  ],
+  clipping: [
+    'Пятые сутки художники города жалуются на одинаковые сны.',
+    'Рисунки, сделанные ими по утрам, поразительно похожи.',
+    'Опрошенные описывают город из тёмно-зелёного камня.',
+    'Изображения существа с крыльями и щупальцами повторяются у всех.',
+    'Знакомы ли эти люди между собой, установить не удалось.',
+    'Никто из них не помнит, когда сны начались.',
+    'Есть свидетельства, что во сне звучат одни и те же слова.',
+    'Специалисты рекомендуют не придавать этому значения.',
+    'И всё же ни один из них не смог эти слова забыть.',
+  ],
+  log: [
+    ['21 марта', 'Ветер стих. Команда спит плохо, двое говорят во сне на чужом языке.'],
+    ['22 марта', 'Полдень. 47°5′ ю. ш., 126°40′ з. д. Штиль. Вода тёплая, как в ванне.'],
+    ['23 марта', 'Компас сошёл с ума, координаты не записаны. Стояли ровно посередине между вчерашней и завтрашней точкой. Видели землю, которой нет ни на одной карте.'],
+    ['24 марта', 'Полдень. 47°13′ ю. ш., 126°46′ з. д. Из шести человек нас осталось двое. Не могу писать о том, что было на берегу.'],
+  ],
+  page: [
+    'Ph\'nglui mglw\'nafh Cthulhu R\'lyeh wgah\'nagl fhtagn.',
+    'In his house at R\'lyeh dead Cthulhu waits ________.',
+  ],
+  couplet: [
+    'That is not dead which can eternal lie,',
+    'And with strange aeons even ________ may die.',
+  ],
+};
+
+/* ===================== КОНЕЦ НАСТРОЕК ===================== */
+</script>
+<style>
+:root{--ink:#d9efe6;--dim:#8fb3a6;--glow:#6ff0bd;--amber:#e8b56a;--panel:rgba(6,16,14,.86);--line:rgba(111,240,189,.28)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#020606;color:var(--ink);font-family:'PT Serif',Georgia,serif;overflow:hidden;overscroll-behavior:none}
+#app{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;user-select:none;-webkit-user-select:none;background:#020606}
+#bg{position:absolute;inset:0;background:#030807 center/cover no-repeat;transition:background-image .6s, filter .6s}
+#bg.desk{background:#050403 url('img/bg_bedroom_morning.jpg') center/cover;filter:blur(7px) brightness(.38) sepia(.35)}
+#bg.tint{filter:hue-rotate(-25deg) saturate(.6) brightness(.7) contrast(1.1)}
+#app.quake{animation:quake .9s ease-in-out 2}
+@keyframes quake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(4px,-2px)}30%,50%,70%{transform:translate(-6px,3px)}40%,60%{transform:translate(6px,-3px)}}
+.m .tag{display:inline-block;font-size:12px;color:var(--dim);margin-right:6px}
+.m.her2{align-self:flex-start;background:#13302a;border-bottom-left-radius:4px}
+.m.her1{align-self:flex-start;background:#1a2a30;border-bottom-left-radius:4px}
+.m.del{align-self:flex-start;background:none;border:1px dashed var(--line);color:var(--dim);font-style:italic;font-size:14px}
+.sig{display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.sig svg{width:22px;height:22px;stroke:var(--amber);fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.seq{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.seq svg{width:26px;height:26px;stroke:var(--amber);fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.paper.notes .nt{margin:0 0 10px;padding-bottom:8px;border-bottom:1px dashed rgba(42,31,18,.3)}
+.paper .dt{font:700 14px 'Cormorant Garamond',serif;color:#6b4a24;letter-spacing:.05em;display:block}
+.paper.logb{font-family:'Caveat',cursive;font-size:19px;line-height:1.35}
+.paper.logb .nt{margin:0 0 10px}
+#bgShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,.15) 60%,rgba(0,0,0,.7) 100%);pointer-events:none}
+#fog{position:absolute;inset:-20%;pointer-events:none;opacity:.35;background:radial-gradient(ellipse at 30% 70%,rgba(80,200,160,.18),transparent 50%),radial-gradient(ellipse at 70% 40%,rgba(60,160,140,.12),transparent 55%);animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(-3%,2%)}to{transform:translate(3%,-2%)}}
+#char{position:absolute;left:50%;bottom:12%;height:66%;-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 97%);mask-image:linear-gradient(to bottom,#000 72%,transparent 97%);max-width:96%;transform:translateX(-50%);object-fit:contain;opacity:0;transition:opacity .45s;pointer-events:none;filter:drop-shadow(0 0 18px rgba(0,0,0,.6))}
+#char.on{opacity:1}
+#char.cat{height:46%;bottom:22%;-webkit-mask-image:none;mask-image:none}
+#char.ghost{opacity:.42;filter:sepia(.3) hue-rotate(110deg) saturate(1.6) drop-shadow(0 0 24px rgba(111,240,189,.5));animation:waver 3s ease-in-out infinite}
+@keyframes waver{50%{transform:translateX(-50%) translateY(-6px)}}
+#top{position:absolute;top:0;left:0;right:0;padding:calc(10px + env(safe-area-inset-top)) 12px 8px;display:flex;align-items:center;gap:10px;z-index:20;background:linear-gradient(rgba(0,0,0,.7),transparent)}
+#prog{display:flex;gap:4px;flex:1}
+#prog span{flex:1;height:22px;border:1px solid var(--line);border-radius:4px;font:700 11px 'Cormorant Garamond',serif;display:flex;align-items:center;justify-content:center;color:var(--dim);letter-spacing:.08em;background:rgba(0,0,0,.35)}
+#prog span.done{background:rgba(111,240,189,.14);color:var(--ink)}
+#prog span.cur{border-color:var(--glow);color:var(--glow);box-shadow:0 0 10px rgba(111,240,189,.35)}
+#invBtn{border:1px solid var(--line);background:rgba(0,0,0,.45);color:var(--ink);border-radius:6px;padding:4px 10px;font:600 13px 'PT Serif',serif;cursor:pointer}
+#invBtn b{color:var(--glow)}
+#dlg{position:absolute;left:10px;right:10px;bottom:calc(14px + env(safe-area-inset-bottom));min-height:130px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px 16px 26px;z-index:10;display:none;box-shadow:0 0 30px rgba(0,0,0,.6)}
+#dlg.on{display:block}
+#who{position:absolute;top:-13px;left:14px;background:#0b1f1a;border:1px solid var(--glow);color:var(--glow);font:700 15px 'Cormorant Garamond',serif;padding:2px 12px;border-radius:4px;letter-spacing:.04em}
+#who:empty{display:none}
+#txt{font-size:17px;line-height:1.5;min-height:52px}
+#txt.narr{font-style:italic;color:#bcd8ce}
+#more{position:absolute;right:14px;bottom:8px;color:var(--glow);font-size:13px;opacity:0;animation:blink 1.2s infinite}
+#more.on{opacity:1}
+@keyframes blink{50%{opacity:.25}}
+#choices{position:absolute;left:14px;right:14px;bottom:calc(170px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;z-index:12}
+.btn{background:rgba(8,26,22,.92);border:1px solid var(--glow);color:var(--ink);padding:13px 16px;border-radius:8px;font:16px 'PT Serif',serif;cursor:pointer;text-align:left;box-shadow:0 0 14px rgba(111,240,189,.15)}
+.btn:active{background:rgba(111,240,189,.2)}
+.btn.c{text-align:center}
+/* chat */
+#chat{position:absolute;inset:0;z-index:8;display:none;flex-direction:column;background:rgba(3,10,9,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#chat.on{display:flex}
+#chatHead{margin-top:calc(44px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(10,22,20,.9);border-bottom:1px solid var(--line)}
+#chatHead .av{width:40px;height:40px;border-radius:50%;background:#123 center 8%/180% no-repeat;border:1px solid var(--line)}
+#chatHead .nm{font-weight:700;font-size:16px}
+#chatHead .st{font-size:12px;color:var(--dim)}
+#msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.m{max-width:80%;padding:9px 13px;border-radius:14px;font-size:16px;line-height:1.4;animation:pop .25s ease-out}
+.m.her{align-self:flex-start;background:#13302a;border-bottom-left-radius:4px}
+.m.me{align-self:flex-end;background:#2b4a3f;border-bottom-right-radius:4px}
+.m.sys{align-self:center;background:none;color:var(--dim);font-style:italic;text-align:center;font-size:14px;max-width:92%}
+@keyframes pop{from{transform:translateY(6px);opacity:0}}
+#chatFoot{padding:10px 12px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;min-height:20px}
+.typing{align-self:flex-start;background:#13302a;border-radius:14px;padding:10px 14px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--dim);animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{50%{transform:translateY(-4px);opacity:.4}}
+.tapnext{align-self:center;color:var(--dim);font-size:13px;padding:6px}
+/* toast */
+#toast{position:absolute;left:10px;right:10px;top:calc(48px + env(safe-area-inset-top));z-index:30;background:rgba(14,30,27,.96);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;gap:10px;align-items:center;transform:translateY(-150%);transition:transform .35s;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+#toast.on{transform:none}
+#toast .av{width:38px;height:38px;flex:none;border-radius:50%;background:#123 center 8%/180% no-repeat}
+#toast .nm{font-size:12px;color:var(--dim)}
+#toast .tx{font-size:15px;line-height:1.35}
+/* overlays */
+.ov{position:absolute;inset:0;z-index:40;display:none;background:rgba(1,6,5,.9);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ov.on{display:block}
+.card{margin:calc(56px + env(safe-area-inset-top)) 14px 30px;background:#071512;border:1px solid var(--line);border-radius:12px;padding:20px 16px;box-shadow:0 0 40px rgba(111,240,189,.08)}
+.card h2{margin:0 0 6px;font:700 26px 'Cormorant Garamond',serif;color:var(--glow);letter-spacing:.04em}
+.card p{margin:0 0 14px;color:#cfe5dc;line-height:1.45}
+input.ans{width:100%;padding:13px 14px;border-radius:8px;border:1px solid var(--line);background:#02100d;color:var(--ink);font:18px 'PT Serif',serif;outline:none;text-align:center;letter-spacing:.06em}
+input.ans:focus{border-color:var(--glow)}
+.row{display:flex;gap:10px;margin-top:12px}
+.row .btn{flex:1;text-align:center}
+.ghostbtn{background:none;border:1px solid var(--line);color:var(--dim)}
+.msg{min-height:22px;margin-top:10px;text-align:center;color:#e88d8d;font-size:15px}
+.msg.ok{color:var(--glow)}
+.hints{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.hint{background:rgba(232,181,106,.08);border-left:3px solid var(--amber);padding:8px 10px;border-radius:4px;font-size:15px;color:#ecd8b5}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.paper{background:#cdb68a url('img/tex_paper.jpg') center/cover;color:#2a1f12;padding:18px 16px;border-radius:4px;margin:0 0 16px;box-shadow:inset 0 0 40px rgba(60,40,10,.45),0 4px 14px rgba(0,0,0,.5);font-size:15.5px;line-height:1.55}
+.paper.news p{margin:0 0 6px;color:#2a1f12}
+.paper .hd{font:700 20px 'Cormorant Garamond',serif;text-align:center;border-bottom:1px solid rgba(42,31,18,.4);margin-bottom:10px;padding-bottom:4px;letter-spacing:.1em}
+.paper.alien{font:500 22px/1.35 'Caveat',cursive;color:#14322a}
+.paper.alien p{margin:0 0 10px;color:#14322a}
+.paper.alien .dr{color:#0b5a40;text-shadow:0 0 6px rgba(20,140,100,.5)}
+/* chapter card */
+#chap{position:absolute;inset:0;z-index:50;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;transition:opacity .8s}
+#chap.on{display:flex}#chap.vis{opacity:1}
+#chap .n{font:700 16px 'Cormorant Garamond',serif;letter-spacing:.4em;color:var(--dim)}
+#chap .t{font:700 44px 'Cormorant Garamond',serif;color:var(--glow);text-shadow:0 0 24px rgba(111,240,189,.5);margin-top:6px}
+#chap .h{position:absolute;bottom:calc(40px + env(safe-area-inset-bottom));color:var(--dim);font-size:13px;opacity:0;transition:opacity 1s}
+#chap.ready .h{opacity:1}
+#fade{position:absolute;inset:0;background:#000;z-index:45;opacity:0;pointer-events:none;transition:opacity 1.4s}
+#fade.on{opacity:1}
+/* item popup */
+#itemPop .card{text-align:center}
+.itemimg{width:150px;height:150px;margin:6px auto 12px;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(111,240,189,.35))}
+.mark{display:inline-block;font:700 18px 'Cormorant Garamond',serif;color:var(--amber);border:1px solid rgba(232,181,106,.5);padding:2px 12px;border-radius:4px;letter-spacing:.12em;margin-bottom:10px}
+/* inventory */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.it{background:#04100d;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center}
+.it img,.it .rel{width:80px;height:80px;object-fit:contain;margin:0 auto 6px;display:block}
+.it .nm{font-weight:700;font-size:14px}
+.it .mk{color:var(--amber);font:700 15px 'Cormorant Garamond',serif;letter-spacing:.1em;margin:2px 0}
+.it .ds{font-size:12.5px;color:var(--dim);line-height:1.35}
+.empty{color:var(--dim);text-align:center;padding:20px}
+/* simon */
+.simon{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px auto 4px;max-width:340px}
+.sb{aspect-ratio:.85;border-radius:12px;border:1px solid var(--line);background:#06201a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .15s}.sb span{font:700 13px 'Cormorant Garamond',serif;color:var(--dim);letter-spacing:.05em}.sb.lit span{color:#e8fff6}
+.sb svg{width:62%;height:62%;stroke:#3d8f73;fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;transition:all .15s}
+.sb.lit{background:#1f6b54;box-shadow:0 0 28px rgba(111,240,189,.7);border-color:var(--glow)}
+.sb.lit svg{stroke:#e8fff6}
+.sstat{text-align:center;color:var(--dim);margin:10px 0 0;min-height:22px}
+/* relief */
+.relief{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:min(78vw,330px);margin:6px auto;background:#0a1a15;padding:3px;border-radius:6px}
+.tile{aspect-ratio:1;background-size:300% 300%;transition:transform .25s;cursor:pointer;border-radius:2px}
+.tile.lock{cursor:default}
+.relief.solved{box-shadow:0 0 40px rgba(111,240,189,.6)}
+.rel{background-size:cover;border-radius:6px}
+/* final */
+#final{background:linear-gradient(transparent 45%,rgba(0,0,0,.85))}
+#final .card{text-align:center;position:absolute;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));margin:0 14px;background:rgba(7,21,18,.88)}
+#final .t{font:700 34px 'Cormorant Garamond',serif;color:var(--amber);margin:4px 0 10px}
+/* start */
+#start{position:absolute;inset:0;z-index:60;background:#000 url('img/bg_rlyeh_shore.jpg') center/cover;display:none;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 24px calc(60px + env(safe-area-inset-bottom))}
+#start.on{display:flex}
+#start::before{content:'';position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(0,0,0,.92) 80%)}
+#start>*{position:relative}
+#start h1{font:700 64px 'Cormorant Garamond',serif;color:var(--glow);margin:0;text-shadow:0 0 30px rgba(111,240,189,.6);letter-spacing:.1em}
+#start p{color:var(--dim);text-align:center;margin:6px 0 26px;line-height:1.5}
+#start .btn{min-width:220px}
+/* admin */
+#admin .btn{display:block;width:100%;margin:8px 0;text-align:center}
+#admin table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+#admin td{border-bottom:1px solid var(--line);padding:5px 4px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bg"></div><div id="fog"></div><div id="bgShade"></div>
+  <img id="char" alt="">
+  <div id="top"><div id="prog"><span>I</span><span>II</span><span>III</span><span>IV</span><span>V</span><span>VI</span></div><button id="invBtn">Инвентарь · <b id="invN">0</b></button></div>
+  <div id="chat"><div id="chatHead"><div class="av"></div><div><div class="nm"></div><div class="st">в сети</div></div></div><div id="msgs"></div><div id="chatFoot"></div></div>
+  <div id="dlg"><div id="who"></div><div id="txt"></div><div id="more">▼</div></div>
+  <div id="choices"></div>
+  <div id="toast"><div class="av"></div><div><div class="nm"></div><div class="tx"></div></div></div>
+  <div id="fade"></div>
+  <div id="taskOv" class="ov"><div class="card" id="taskCard"></div></div>
+  <div id="itemPop" class="ov"><div class="card"></div></div>
+  <div id="invOv" class="ov"><div class="card"><h2>Инвентарь</h2><div id="invList"></div><div class="row"><button class="btn c" id="invClose">Закрыть</button></div></div></div>
+  <div id="final" class="ov"><div class="card"></div></div>
+  <div id="admin" class="ov"><div class="card"></div></div>
+  <div id="chap"><div class="n"></div><div class="t"></div><div class="h">коснись, чтобы продолжить</div></div>
+  <div id="start"><h1>ЗОВ</h1><p>Играй с телефона.<br>Иногда придётся вставать и искать.</p><button class="btn c" id="startBtn">Начать</button></div>
+</div>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const KEY='zov_save_v2';
+const ROMAN=['I','II','III','IV','V','VI'];
+const RN=n=>(typeof ALIAS!=='undefined'&&ALIAS[n])||n;
+const IMG=n=>{n=RN(n);return 'img/'+n+(/^(bg_|cg_|tex_)/.test(n)?'.jpg':'.webp');};
+const SHE_AV="url('img/she_tender.webp')";
+
+/* ---------- utils ---------- */
+const norm=s=>s.toLowerCase().replace(/ё/g,'е').replace(/[^0-9a-zа-я]/g,'');
+function fnv(s){let h=0x811c9dc5;const b=new TextEncoder().encode('zov26:'+norm(s));for(const x of b){h^=x;h=Math.imul(h,0x01000193)>>>0;}return h.toString(16).padStart(8,'0');}
+const dec=b=>{try{return decodeURIComponent(escape(atob(b)));}catch(e){return '';}};
+const TG=(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData!==undefined)?window.Telegram.WebApp:null;
+if(TG){try{TG.ready();TG.expand();TG.setHeaderColor&&TG.setHeaderColor('#020606');TG.setBackgroundColor&&TG.setBackgroundColor('#020606');TG.disableVerticalSwipes&&TG.disableVerticalSwipes();TG.enableClosingConfirmation&&TG.enableClosingConfirmation();}catch(e){}}
+const cloudOK=()=>TG&&TG.CloudStorage&&TG.isVersionAtLeast&&TG.isVersionAtLeast('6.9');
+function cloudSave(v){if(!cloudOK())return;try{let o=Object.assign({},v,{chat:(v.chat||[]).slice(-12)});let t=JSON.stringify(o);if(t.length>4000){o.chat=[];t=JSON.stringify(o);}TG.CloudStorage.setItem(KEY,t,()=>{});}catch(e){}}
+function cloudLoad(cb){if(!cloudOK())return cb(null);let done=false;const fin=v=>{if(!done){done=true;cb(v);}};setTimeout(()=>fin(null),2500);try{TG.CloudStorage.getItem(KEY,(err,val)=>{try{fin(val?JSON.parse(val):null);}catch(e){fin(null);}});}catch(e){fin(null);}}
+function cloudClear(){if(cloudOK())try{TG.CloudStorage.removeItem(KEY,()=>{});}catch(e){}}
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v));}catch(e){}cloudSave(v);},clear(){try{localStorage.removeItem(KEY);}catch(e){}cloudClear();}};
+
+/* ---------- state ---------- */
+let S={i:0,inv:[],chat:[],mode:'vn',bg:'',pose:'',chapter:0,started:false,hints:{}};
+const save=()=>store.set(S);
+
+/* ---------- preload ---------- */
+['bg_bedroom_morning','bg_kitchen','bg_rlyeh_shore','bg_rlyeh_gate','bg_rlyeh_temple','bg_bedroom_dawn','cg_final','bg_folder','bg_rlyeh_rising','item_log','item_envelope','tex_paper','tex_stone','she_neutral','she_mysterious','she_tender','hero_shocked','cat_udon','cat_sima','npc_nightgaunt','npc_deepone','item_note','item_can','item_clipping','item_page','item_seal','item_offering'].forEach(n=>{const i=new Image();i.src=IMG(n);});
+
+/* ---------- visuals ---------- */
+function setBg(n){S.bg=n;const b=$('#bg');b.className=S.tint?'tint':'';if(RN(n)==='desk'){b.classList.add('desk');b.style.backgroundImage='';}else if(false){}else if(n){b.style.backgroundImage=`url('${IMG(n)}')`;}}
+function setPose(n,ghost){S.pose=n;const c=$('#char');if(!n){c.className='';return;}const src=IMG(n);if(!c.src.endsWith(src))c.src=src;c.className='on'+(n.startsWith('cat_')?' cat':'')+(ghost?' ghost':'');}
+function setMode(m){S.mode=m;$('#chat').classList.toggle('on',m==='chat');if(m==='chat'){$('#dlg').classList.remove('on');setPose('');}}
+function setProg(){document.querySelectorAll('#prog span').forEach((s,k)=>{s.className=k+1<S.chapter?'done':(k+1===S.chapter?'cur':'');});$('#invN').textContent=S.inv.length;}
+document.querySelectorAll('.av').forEach(a=>a.style.backgroundImage=SHE_AV);
+$('#chatHead .nm').textContent=CONFIG.HER_NAME;$('#toast .nm').textContent=CONFIG.HER_NAME;
+
+/* ---------- chat ---------- */
+function addMsg(from,text,store_=true){const d=document.createElement('div');d.className='m '+from;if(from==='her1'||from==='her2'){const t=document.createElement('span');t.className='tag';t.textContent=from==='her1'?'①':'②';d.appendChild(t);d.appendChild(document.createTextNode(text));}else d.textContent=text;$('#msgs').appendChild(d);$('#msgs').scrollTop=1e6;if(store_){S.chat.push([from,text]);if(S.chat.length>60)S.chat.shift();}}
+function rebuildChat(){$('#msgs').innerHTML='';S.chat.forEach(m=>addMsg(m[0],m[1],false));}
+function typing(ms){return new Promise(r=>{const t=document.createElement('div');t.className='typing';t.innerHTML='<i></i><i></i><i></i>';$('#msgs').appendChild(t);$('#msgs').scrollTop=1e6;$('#chatHead .st').textContent='печатает…';setTimeout(()=>{t.remove();$('#chatHead .st').textContent='в сети';r();},ms);});}
+
+/* ---------- dialog typewriter ---------- */
+let typingTimer=null,typingDone=true,fullText='';
+function showText(who,text,narr){const d=$('#dlg');d.classList.add('on');$('#who').textContent=who||'';const t=$('#txt');t.className=narr?'narr':'';t.textContent='';$('#more').classList.remove('on');fullText=text;typingDone=false;let k=0;clearInterval(typingTimer);typingTimer=setInterval(()=>{k++;t.textContent=fullText.slice(0,k);if(k>=fullText.length)finishType();},28);}
+function finishType(){clearInterval(typingTimer);$('#txt').textContent=fullText;typingDone=true;$('#more').classList.add('on');}
+
+/* ---------- toast ---------- */
+function toast(text){return new Promise(r=>{const t=$('#toast');t.querySelector('.tx').textContent=text;t.classList.add('on');setTimeout(()=>{waitTap(()=>{t.classList.remove('on');setTimeout(r,250);});},450);});}
+
+/* ---------- tap handling ---------- */
+let tapCb=null;
+function waitTap(cb){tapCb=cb;}
+$('#app').addEventListener('click',e=>{
+  if(e.target.closest('button,.ov,input,#top,.sb,.tile'))return;
+  if($('#chap').classList.contains('on')){if($('#chap').classList.contains('ready')&&tapCb){const c=tapCb;tapCb=null;c();}return;}
+  if(!typingDone&&$('#dlg').classList.contains('on')){finishType();return;}
+  if(tapCb){const c=tapCb;tapCb=null;c();}
+});
+
+/* ---------- engine ---------- */
+function next(){S.i++;save();run();}
+async function run(){
+  const st=SCRIPT[S.i];if(!st)return;
+  $('#choices').innerHTML='';
+  if(st.chapter){S.chapter=st.chapter;setProg();save();const c=$('#chap');c.querySelector('.n').textContent='ГЛАВА '+ROMAN[st.chapter-1];c.querySelector('.t').textContent=st.title;c.className='on';$('#dlg').classList.remove('on');requestAnimationFrame(()=>c.classList.add('vis'));setTimeout(()=>c.classList.add('ready'),1300);waitTap(()=>{c.classList.remove('vis');setTimeout(()=>{c.className='';$('#fade').classList.remove('on');next();},700);});return;}
+  if(st.head!==undefined&&!st.mode){S.head=st.head;$('#chatHead .nm').textContent=st.head;return next();}
+  if(st.mode){if(st.tint!==undefined)S.tint=st.tint;if(st.head!==undefined){S.head=st.head;$('#chatHead .nm').textContent=st.head;}if(st.bg)setBg(st.bg);setMode(st.mode);if(st.mode==='chat')rebuildChat();return next();}
+  if(st.quake){if(st.bg)setBg(st.bg);const ap=$('#app');ap.classList.remove('quake');void ap.offsetWidth;ap.classList.add('quake');setTimeout(()=>ap.classList.remove('quake'),2000);setTimeout(next,1200);return;}
+  if(st.del){await typing(900);addMsg('del','Сообщение удалено');setTimeout(next,1400);return;}
+  if(st.bg!==undefined&&Object.keys(st).length===1){setBg(st.bg);return next();}
+  if(st.pose!==undefined&&!('say' in st)&&!('text' in st)){setPose(st.pose);return next();}
+  if(st.ghost){setPose(st.ghost,true);return next();}
+  if(st.fade){$('#dlg').classList.remove('on');setPose('');$('#fade').classList.add('on');setTimeout(next,1500);return;}
+  if(st.chat!==undefined){if(S.mode!=='chat'){await toast(st.chat);return next();}await typing(Math.min(3200,900+st.chat.length*30));addMsg(st.from||'her',st.chat);setTimeout(next,900);return;}
+  if(st.sys){addMsg('sys',st.sys);setTimeout(next,2200);return;}
+  if(st.toast){await toast(st.toast);return next();}
+  if(st.chatChoice||st.action){const f=$('#chatFoot');f.innerHTML='';const opts=st.chatChoice||[st.action];opts.forEach(o=>{const b=document.createElement('button');b.className='btn c';b.textContent=o;b.onclick=()=>{f.innerHTML='';if(st.chatChoice)addMsg('me',o);save();setTimeout(next,300);};f.appendChild(b);});$('#msgs').scrollTop=1e6;return;}
+  if(st.narr){setPose(S.pose&&S.pose.startsWith('she_')?'':S.pose);showText('',st.narr,true);waitTap(next);return;}
+  if('say' in st){if(st.pose!==undefined)setPose(st.pose);showText(st.say,st.text,!st.say);waitTap(next);return;}
+  if(st.choice){$('#dlg').classList.remove('on');const ch=$('#choices');st.choice.forEach(o=>{const b=document.createElement('button');b.className='btn';b.textContent=o.label;b.onclick=async()=>{ch.innerHTML='';if(o.reply)await toast(o.reply);next();};ch.appendChild(b);});return;}
+  if(st.task){if(S.mode==='chat'){const f=$('#chatFoot');f.innerHTML='';const b=document.createElement('button');b.className='btn c';b.textContent='Ввести ответ';b.onclick=()=>{f.innerHTML='';openTask(st.task);};f.appendChild(b);$('#msgs').scrollTop=1e6;return;}openTask(st.task);return;}
+  if(st.item){giveItem(st.item);return;}
+  if(st.removeItem){S.inv=S.inv.filter(x=>x!==st.removeItem);setProg();return next();}
+  if(st.final){showFinal();return;}
+  next();
+}
+
+/* ---------- items ---------- */
+function itemImgHTML(id,cls){const it=ITEMS[id];if(it.img==='RELIEF')return `<div class="rel ${cls||''}" style="background-image:url('${symbolURI()}'),url('img/tex_stone.jpg')"></div>`;return `<img class="${cls||''}" src="${IMG(it.img)}" alt="">`;}
+function markHTML(it){if(it.seq)return `<div class="seq">${it.seq.map(k=>SYM[k][1]).join('')}</div><div style="font-size:12px;color:var(--dim);margin-top:4px">${it.seq.map(k=>SYM[k][0]).join(' · ')}</div>`;if(it.sign===undefined)return '';return `<div class="sig">${SYM[it.sign][1]}<span>${SYM[it.sign][0]} · ${it.letter}</span></div>`;}
+function giveItem(id){if(!S.inv.includes(id))S.inv.push(id);setProg();save();const it=ITEMS[id];const ov=$('#itemPop');ov.querySelector('.card').innerHTML=`<div style="color:var(--dim);font-size:13px;letter-spacing:.2em">ПОЛУЧЕН ПРЕДМЕТ</div>${itemImgHTML(id,'itemimg')}<h2>${it.name}</h2><p>${it.desc}</p>${markHTML(it)?`<div class="mark">${markHTML(it)}</div>`:''}<div class="row"><button class="btn c">Дальше</button></div>`;ov.classList.add('on');ov.querySelector('button').onclick=()=>{ov.classList.remove('on');next();};}
+function renderInv(){const L=$('#invList');if(!S.inv.length){L.innerHTML='<div class="empty">Пока пусто.</div>';return;}L.innerHTML='<div class="grid">'+S.inv.map(id=>{const it=ITEMS[id];return `<div class="it">${itemImgHTML(id)}<div class="nm">${it.name}</div><div class="ds">${it.desc}</div>${markHTML(it)?`<div class="mk">${markHTML(it)}</div>`:''}</div>`;}).join('')+'</div>';}
+$('#invBtn').onclick=()=>{renderInv();$('#invOv').classList.add('on');};
+$('#invClose').onclick=()=>$('#invOv').classList.remove('on');
+
+/* ---------- symbol svg ---------- */
+function symbolSVG(){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><filter id="g" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g fill="none" stroke="#86f5c8" stroke-width="9" stroke-linecap="round" filter="url(#g)"><circle cx="150" cy="128" r="92"/><path d="M85 128 Q150 70 215 128 Q150 186 85 128Z"/><circle cx="150" cy="128" r="17" fill="#86f5c8"/><path d="M118 214 C112 240 90 250 74 288"/><path d="M150 220 C162 245 138 262 150 294"/><path d="M182 214 C188 240 210 250 226 288"/><path d="M150 36 L150 20 M60 128 L44 128 M240 128 L256 128"/></g></svg>`;}
+function symbolURI(){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(symbolSVG());}
+
+/* ---------- tasks ---------- */
+function docHTML(d){if(d==='notes')return `<div class="paper notes">${DOCS.notes.map(n=>`<div class="nt"><span class="dt">${n[0]}</span>${n[1]}</div>`).join('')}</div>`;if(d==='log')return `<div class="paper logb"><div class="hd" style="font-family:Cormorant Garamond,serif">ШХУНА «ЭММА» · 1925</div>${DOCS.log.map(n=>`<div class="nt"><span class="dt">${n[0]}</span>${n[1]}</div>`).join('')}</div>`;if(d==='couplet')return `<div class="paper alien"><p>${DOCS.couplet[0]}</p><p class="dr">${DOCS.couplet[1]}</p></div>`;if(d==='clipping')return `<div class="paper news"><div class="hd">ГОРОДСКИЕ ВЕСТИ</div>${DOCS.clipping.map(l=>`<p>${l}</p>`).join('')}</div>`;if(d==='page')return `<div class="paper alien"><p>${DOCS.page[0]}</p><p class="dr">${DOCS.page[1]}</p></div>`;return '';}
+function openTask(id){
+  const T=TASKS[id];const ov=$('#taskOv');const card=$('#taskCard');
+  const used=S.hints[id]||0;
+  let body=`<h2>${T.title}</h2>`+(T.doc?docHTML(T.doc):'')+`<p>${T.prompt}</p>`;
+  if(T.game==='simon')body+=simonHTML();
+  else if(T.game==='relief')body+=`<div class="relief" id="relief"></div>`;
+  else if(T.pick)body+=`<div class="row" style="flex-direction:column">${T.pick.map((o,k)=>`<button class="btn c pk" data-k="${k+1}">${o}</button>`).join('')}</div>`;
+  else body+=`<input class="ans" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ответ"><div class="row">${T.inv?'<button class="btn c ghostbtn" id="tInv">Инвентарь</button>':''}<button class="btn c" id="tOk">Проверить</button></div>`;
+  body+=`<div class="msg" id="tMsg"></div><div class="hints" id="hints"></div><div class="row"><button class="btn c ghostbtn" id="tHint"></button></div>`;
+  card.innerHTML=body;ov.classList.add('on');ov.scrollTop=0;
+  const done=()=>{const m=$('#tMsg');m.className='msg ok';m.textContent='Верно.';setTimeout(()=>{ov.classList.remove('on');next();},900);};
+  // hints
+  const renderHints=()=>{const n=S.hints[id]||0;const H=$('#hints');H.innerHTML='';for(let k=0;k<n;k++){const h=document.createElement('div');h.className='hint';h.textContent=k<2?T.hints[k]:(T.a?'Ответ: '+dec(T.a):'Барельеф собран.');H.appendChild(h);}const b=$('#tHint');if(n>=3){b.style.display='none';}else{b.textContent=n<2?`Подсказка ${n+1} из 3`:(T.solveHint||'Показать ответ');}};
+  renderHints();
+  $('#tHint').onclick=()=>{S.hints[id]=(S.hints[id]||0)+1;save();renderHints();if(S.hints[id]===3&&T.game==='relief'&&window._reliefSolve)window._reliefSolve();};
+  if(T.game==='simon')initSimon(done);
+  else if(T.game==='relief')initRelief(done);
+  else if(T.pick){card.querySelectorAll('.pk').forEach(b=>b.onclick=()=>{if(T.h.includes(fnv(b.dataset.k)))done();else{const m=$('#tMsg');m.className='msg';m.textContent=T.wrong||'Не то.';const ap=$('#app');ap.classList.remove('quake');void ap.offsetWidth;ap.classList.add('quake');}});}
+  else{const inp=$('#ans');const bad=['Не то.','Нет. Подумай ещё.','Тишина. Ответ неверный.'];let bi=0;
+    const check=()=>{const v=inp.value;if(!norm(v))return;if(T.h.includes(fnv(v))){inp.blur();done();}else{const m=$('#tMsg');m.className='msg';m.textContent=bad[bi++%bad.length];inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');}};
+    $('#tOk').onclick=check;inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+    if(T.inv)$('#tInv').onclick=()=>{renderInv();$('#invOv').classList.add('on');};}
+}
+
+/* simon */
+const SYM=[
+ ['Око','<svg viewBox="0 0 100 100"><path d="M8 50 Q50 12 92 50 Q50 88 8 50Z"/><ellipse cx="50" cy="50" rx="7" ry="17"/></svg>'],
+ ['Щупальце','<svg viewBox="0 0 100 100"><path d="M30 92 C20 60 70 58 62 34 C57 18 38 22 44 34 C48 42 58 38 56 30"/><circle cx="35" cy="72" r="3"/><circle cx="48" cy="58" r="3"/><circle cx="60" cy="46" r="3"/></svg>'],
+ ['Знак','<svg viewBox="0 0 100 100"><path d="M50 6 L62 40 L96 40 L68 60 L79 94 L50 73 L21 94 L32 60 L4 40 L38 40Z"/><path d="M42 54 Q50 40 58 54 Q50 62 42 54Z"/></svg>'],
+ ['Крылья','<svg viewBox="0 0 100 100"><path d="M50 62 L8 30 Q18 48 12 60 Q24 54 28 66 Q36 58 50 62Z"/><path d="M50 62 L92 30 Q82 48 88 60 Q76 54 72 66 Q64 58 50 62Z"/></svg>'],
+ ['Башня','<svg viewBox="0 0 100 100"><path d="M30 92 L40 10 L66 16 L72 92Z"/><path d="M46 92 L48 70 L58 70 L60 92"/><path d="M14 92 L88 92"/></svg>'],
+ ['Ктулху','<svg viewBox="0 0 100 100"><path d="M26 52 C22 18 78 18 74 52"/><circle cx="40" cy="42" r="4"/><circle cx="60" cy="42" r="4"/><path d="M30 52 C28 70 20 78 18 92"/><path d="M42 54 C42 72 36 82 38 94"/><path d="M58 54 C58 72 64 82 62 94"/><path d="M70 52 C72 70 80 78 82 92"/></svg>']];
+const SEQS=[[0,2,4,1],[3,0,5,2,4,1],[5,1,3,0,2,4,5,3]];
+function simonHTML(){return `<div class="simon">${SYM.map((s,k)=>`<div class="sb" data-k="${k}">${s[1]}<span>${s[0]}</span></div>`).join('')}</div><div class="sstat" id="sstat"></div><div class="row"><button class="btn c ghostbtn" id="sRep">Показать узор ещё раз</button></div>`;}
+function initSimon(done){let round=0,pos=0,busy=true;const bs=[...document.querySelectorAll('.sb')];const st=$('#sstat');
+  const lit=(k,ms)=>new Promise(r=>{bs[k].classList.add('lit');setTimeout(()=>{bs[k].classList.remove('lit');setTimeout(r,200);},ms);});
+  const play=async()=>{busy=true;pos=0;st.textContent=`Круг ${round+1} из 3. Смотри…`;await new Promise(r=>setTimeout(r,700));for(const k of SEQS[round])await lit(k,600);st.textContent=`Круг ${round+1} из 3. Повтори`;busy=false;};
+  bs.forEach(b=>b.onclick=async()=>{if(busy)return;const k=+b.dataset.k;busy=true;await lit(k,220);const Q=SEQS[round];if(k===Q[pos]){pos++;st.textContent=`Круг ${round+1} из 3: `+'●'.repeat(pos)+'○'.repeat(Q.length-pos);if(pos===Q.length){round++;if(round===SEQS.length){done();return;}st.textContent='Врата дрогнули…';setTimeout(play,1200);return;}busy=false;}else{st.textContent='Узор рассыпался.';$('.simon').classList.add('shake');setTimeout(()=>{$('.simon').classList.remove('shake');play();},1000);}});
+  $('#sRep').onclick=()=>{if(!busy)play();};play();}
+
+/* relief */
+function initRelief(done){const R=$('#relief');let rot=[1,3,2,2,0,1,3,1,2];const uri=symbolURI();let solved=false;
+  R.innerHTML=rot.map((r,k)=>`<div class="tile${k===4?' lock':''}" data-k="${k}" style="background-image:url('${uri}'),url('img/tex_stone.jpg');background-position:${(k%3)*50}% ${Math.floor(k/3)*50}%;transform:rotate(${r*90}deg)"></div>`).join('');
+  const tiles=[...R.children];const apply=()=>tiles.forEach((t,k)=>t.style.transform=`rotate(${rot[k]*90}deg)`);
+  const check=()=>{if(!solved&&rot.every(r=>r%4===0)){solved=true;R.classList.add('solved');done();}};
+  tiles.forEach((t,k)=>t.onclick=()=>{if(k===4||solved)return;rot[k]++;apply();check();});
+  window._reliefSolve=()=>{rot=rot.map(r=>Math.ceil(r/4)*4);apply();setTimeout(check,300);};}
+
+/* ---------- final ---------- */
+function showFinal(){$('#dlg').classList.remove('on');const ov=$('#final');const ph=CONFIG.PHONE;
+  ov.querySelector('.card').innerHTML=`<div style="color:var(--dim);letter-spacing:.3em;font-size:13px">КОНЕЦ</div><div class="t">С днём рождения</div><p>Он будет спать дальше.<br>А ты проснулся.</p><p style="color:var(--dim);font-size:14px">Пройдено глав: 6 из 6</p>${ph?`<p style="font:700 22px 'Cormorant Garamond',serif;color:var(--glow);margin:4px 0">Позвони ей.</p><p style="font-size:20px;letter-spacing:.06em">${ph}</p><div class="row"><a class="btn c" style="text-decoration:none" href="tel:${ph.replace(/[^+\d]/g,'')}" target="_top">Позвонить</a><button class="btn c ghostbtn" id="cpy">Скопировать номер</button></div>`:`<p style="font:700 22px 'Cormorant Garamond',serif;color:var(--glow)">Позвони ей.</p>`}`;
+  ov.classList.add('on');const c=$('#cpy');if(c)c.onclick=async()=>{try{await navigator.clipboard.writeText(ph);c.textContent='Скопировано';}catch(e){c.textContent='Не вышло — набери вручную';}};}
+
+/* ---------- admin (5 быстрых нажатий на полоску глав или адрес с #admin) ---------- */
+let taps=[];$('#prog').addEventListener('click',()=>{const n=Date.now();taps=taps.filter(t=>n-t<2500);taps.push(n);if(taps.length>=5){taps=[];openAdmin();}});
+function openAdmin(){const ov=$('#admin');const rows=Object.entries(TASKS).map(([k,t])=>`<tr><td>${t.title}</td><td style="color:var(--glow)">${t.a?dec(t.a):'мини-игра'}</td></tr>`).join('');
+  ov.querySelector('.card').innerHTML=`<h2>Меню хозяйки</h2><p style="color:var(--dim);font-size:14px">Это меню видно только тому, кто знает, как его открыть.</p><button class="btn" id="aReset">Начать заново (стереть прогресс)</button>${[1,2,3,4,5,6].map(n=>`<button class="btn ghostbtn" data-ch="${n}">Перейти к главе ${ROMAN[n-1]}</button>`).join('')}<h2 style="font-size:20px;margin-top:16px">Шпаргалка</h2><table>${rows}</table><div class="row"><button class="btn c" id="aClose">Закрыть</button></div>`;
+  ov.classList.add('on');
+  $('#aReset').onclick=()=>{store.clear();location.hash='';setTimeout(()=>location.reload(),600);};
+  $('#aClose').onclick=()=>ov.classList.remove('on');
+  ov.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>jump(+b.dataset.ch));}
+function jump(ch){const idx=SCRIPT.findIndex(s=>s.chapter===ch);let inv=[],bg='',mode='vn';for(let k=0;k<idx;k++){const s=SCRIPT[k];if(s.item&&!inv.includes(s.item))inv.push(s.item);if(s.removeItem)inv=inv.filter(x=>x!==s.removeItem);}
+  S={i:idx,inv,chat:[],mode:'vn',bg:'',pose:'',chapter:ch,started:true,hints:{},tint:false,head:CONFIG.HER_NAME};save();location.hash='';setTimeout(()=>location.reload(),600);}
+
+/* ---------- boot ---------- */
+function boot(){cloudLoad(cv=>boot2(store.get()||cv));}
+function boot2(sv){
+  if(sv&&sv.started){S=Object.assign(S,sv);if(S.head)$('#chatHead .nm').textContent=S.head;$('#start').classList.remove('on');setBg(S.bg);setProg();setMode(S.mode);if(S.mode==='chat')rebuildChat();
+    // если остановились на середине выбора/реплики — начнём с этого шага
+    run();}
+  else{$('#start').classList.add('on');$('#startBtn').onclick=()=>{S.started=true;save();$('#start').classList.remove('on');run();};}
+  if(location.hash==='#admin')openAdmin();}
+window.addEventListener('hashchange',()=>{if(location.hash==='#admin')openAdmin();});
+boot();
+})();
+</script>
+</body>
+</html>
